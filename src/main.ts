@@ -1,6 +1,7 @@
 import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+import Stats from 'three/addons/libs/stats.module.js'
 
 const scene = new THREE.Scene()
 
@@ -25,10 +26,26 @@ const material = new THREE.MeshNormalMaterial({ wireframe: true })
 const cube = new THREE.Mesh(geometry, material)
 scene.add(cube)
 
+const stats = new Stats()
+document.body.appendChild(stats.dom)
+
+//Make the code frame rate independant by considering clock delta time
+const clock = new THREE.Clock()
+let delta
+
 function animate() {
   requestAnimationFrame(animate)
 
+  delta = clock.getDelta()
+
+  //cube.rotation.x += 0.01
+  //cube.rotation.y += 0.01
+  cube.rotation.x += delta
+  cube.rotation.y += delta
+
   renderer.render(scene, camera)
+
+  stats.update()
 }
 
 animate()
