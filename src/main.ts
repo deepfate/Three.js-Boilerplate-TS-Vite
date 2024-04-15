@@ -45,12 +45,14 @@ const meshes = [
   new THREE.Mesh(geometry, new THREE.MeshNormalMaterial({ flatShading: true })),
   new THREE.Mesh(geometry, new THREE.MeshPhongMaterial({ color: data.color, flatShading: true })),
   new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ color: data.color, flatShading: true })),
+  new THREE.Mesh(geometry, new THREE.MeshToonMaterial({color: data.color})),
 ]
 
 meshes[0].position.set(-3, 1, 0)
 meshes[1].position.set(-1, 1, 0)
 meshes[2].position.set(1, 1, 0)
 meshes[3].position.set(3, 1, 0)
+meshes[4].position.set(5, 1, 0)
 
 scene.add(...meshes)
 
@@ -68,6 +70,7 @@ const gui = new GUI()
 // The IDE will flag it and tell you it doesnt know whats going on. 
 // TODO: find otu what the ';' is for. 
 
+// Basic Mesh
 const meshBasicMaterialFolder = gui.addFolder('MeshBasicMaterial')
 meshBasicMaterialFolder.addColor(data, 'color').onChange(() => {
   ;(meshes[0].material as THREE.MeshBasicMaterial).color.set(data.color)
@@ -75,6 +78,7 @@ meshBasicMaterialFolder.addColor(data, 'color').onChange(() => {
 meshBasicMaterialFolder.add(meshes[0].material, 'wireframe')
 meshBasicMaterialFolder.open()
 
+// Normal Mesh
 const meshNormalMaterialFolder = gui.addFolder('MeshNormalMaterial')
 meshNormalMaterialFolder.add(meshes[1].material as THREE.MeshNormalMaterial, 'flatShading').onChange(() => {
   meshes[1].material.needsUpdate = true
@@ -82,6 +86,7 @@ meshNormalMaterialFolder.add(meshes[1].material as THREE.MeshNormalMaterial, 'fl
 meshNormalMaterialFolder.add(meshes[1].material, 'wireframe')
 meshNormalMaterialFolder.open()
 
+// Phong Mesh
 const meshPhongMaterialFolder = gui.addFolder('MeshPhongMaterial')
 meshPhongMaterialFolder.addColor(data, 'color').onChange(() => {
   ;(meshes[2].material as THREE.MeshPhongMaterial).color.set(data.color)
@@ -92,6 +97,7 @@ meshPhongMaterialFolder.add(meshes[2].material as THREE.MeshPhongMaterial, 'flat
 meshPhongMaterialFolder.add(meshes[2].material, 'wireframe')
 meshPhongMaterialFolder.open()
 
+// Standard Mesh
 const meshStandardMaterialFolder = gui.addFolder('MeshStandardMaterial')
 meshStandardMaterialFolder.addColor(data, 'color').onChange(() => {
   ;(meshes[3].material as THREE.MeshStandardMaterial).color.set(data.color)
@@ -101,6 +107,12 @@ meshStandardMaterialFolder.add(meshes[3].material as THREE.MeshStandardMaterial,
 })
 meshStandardMaterialFolder.add(meshes[3].material, 'wireframe')
 meshStandardMaterialFolder.open()
+
+// Toon Mesh
+const meshToonMaterialFolder = gui.addFolder('MeshToonMaterial')
+meshToonMaterialFolder.addColor(data, 'color').onChange(() => {
+  ;(meshes[4].material as THREE.MeshToonMaterial).color.set(data.color)
+})
 
 const lightFolder = gui.addFolder('Light')
 lightFolder.add(light, 'visible')
@@ -127,7 +139,7 @@ function animate() {
 
   controls.update()
 
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < 5; i++) {
     v.copy(meshes[i].position)
     v.project(camera)
 
