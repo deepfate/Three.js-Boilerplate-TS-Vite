@@ -24,9 +24,13 @@ controls.target.set(8,0,0)
 controls.update()
 
 // Setup lighting
-const light = new THREE.PointLight(0xffffff, 400)
-light.position.set(10, 10, 10)
-scene.add(light)
+const light1 = new THREE.PointLight(0xffffff, 400)
+light1.position.set(10, 10, 10)
+scene.add(light1)
+
+const light2 = new THREE.PointLight(0xffffff, 400)
+light2.position.set(-20, -20, -20)
+scene.add(light2)
 
 // Setup objects that are offset from each other through inheritance 
 const object1 = new THREE.Mesh(new THREE.SphereGeometry(), new THREE.MeshPhongMaterial({color : 0xff0000}))
