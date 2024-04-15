@@ -5,80 +5,104 @@ import Stats from 'three/addons/libs/stats.module.js'
 import { GUI } from 'dat.gui'
 
 const scene = new THREE.Scene()
-scene.add(new THREE.GridHelper())
+scene.environment = new THREE.CubeTextureLoader().setPath('https://sbcode.net/img/').load(['px.png', 'nx.png', 'py.png', 'ny.png', 'pz.png', 'nz.png'])
+
+const axesHelper = new THREE.AxesHelper(5)
+scene.add(axesHelper)
+
+const gridHelper = new THREE.GridHelper()
+gridHelper.position.y = -1
+scene.add(gridHelper)
 
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
-camera.position.z = 1.5
+camera.position.set(0, 2, 7)
 
-const renderer = new THREE.WebGLRenderer()
+const renderer = new THREE.WebGLRenderer({ antialias: true })
 renderer.setSize(window.innerWidth, window.innerHeight)
 document.body.appendChild(renderer.domElement)
+
+const controls = new OrbitControls(camera, renderer.domElement)
+controls.enableDamping = true
+
+const boxGeometry = new THREE.BoxGeometry()
+
+const sphereGeometry = new THREE.SphereGeometry()
+
+const icosahedronGeometry = new THREE.IcosahedronGeometry()
+
+const planeGeometry = new THREE.PlaneGeometry()
+
+const torusKnotGeometry = new THREE.TorusKnotGeometry()
+
+//const material = new THREE.MeshStandardMaterial() // Same material used on all meshes; any changes made tot his mesh will affect all 
+const material = new THREE.MeshNormalMaterial()
+
+const cube = new THREE.Mesh(boxGeometry, material)
+cube.position.set(5, 0, 0)
+scene.add(cube)
+
+const sphere = new THREE.Mesh(sphereGeometry, material)
+sphere.position.set(3, 0, 0)
+scene.add(sphere)
+
+const icosahedron = new THREE.Mesh(icosahedronGeometry, material)
+icosahedron.position.set(0, 0, 0)
+scene.add(icosahedron)
+
+const plane = new THREE.Mesh(planeGeometry, material)
+plane.position.set(-2, 0, 0)
+scene.add(plane)
+
+const torusKnot = new THREE.Mesh(torusKnotGeometry, material)
+torusKnot.position.set(-5, 0, 0)
+scene.add(torusKnot)
 
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight
   camera.updateProjectionMatrix()
   renderer.setSize(window.innerWidth, window.innerHeight)
-
-  renderer.render(scene, camera) // Render whenever the screen size changes
 })
-
-const controls = new OrbitControls(camera, renderer.domElement)
-controls.addEventListener('change', ()=>{
-  renderer.render(scene, camera) // Render whenever OrbitControls changes
-})
-
-new OrbitControls(camera, renderer.domElement)
-
-const geometry = new THREE.BoxGeometry()
-const material = new THREE.MeshNormalMaterial({ wireframe: true })
-
-const cube = new THREE.Mesh(geometry, material)
-scene.add(cube)
-
-renderer.render(scene, camera)
 
 const stats = new Stats()
 document.body.appendChild(stats.dom)
 
-// GUI
+const options = {
+  side: {
+    FrontSide: THREE.FrontSide,
+    BackSide: THREE.BackSide,
+    DoubleSide: THREE.DoubleSide,
+  },
+}
+
+// GUI and Controls
 const gui = new GUI()
 
-// GUI - Camera Controls
-const cameraFolder = gui.addFolder('Camera')
+const materialFolder = gui.addFolder('THREE.Material')
+// Transparency and opacity go together. 
+// Any changes to the material that would require compilation, such as transparency, must also be updated
+materialFolder.add(material, 'transparent').onChange(() => (material.needsUpdate = true))
 
-cameraFolder.add(camera.position, 'x', -10, 10)
-cameraFolder.add(camera.position, 'y', -10, 10)
-cameraFolder.add(camera.position, 'z', -10, 10)
+//alphaTest is related to opacity
+materialFolder.add(material, 'opacity', 0, 1, 0.01)
+materialFolder.add(material, 'alphaTest', 0, 1, 0.01).onChange(() => updateMaterial())
 
-cameraFolder.add(camera, 'fov', 0, 180, 0.01).onChange( () => {
-  camera.updateProjectionMatrix()
-})
-cameraFolder.add(camera, 'aspect', 0.00001, 10).onChange( () => {
-  camera.updateProjectionMatrix()
-})
-cameraFolder.add(camera, 'near', 0.01, 10).onChange( () => {
-  camera.updateProjectionMatrix()
-})
-cameraFolder.add(camera, 'far', 0.01, 10).onChange( () => {
-  camera.updateProjectionMatrix()
-})
+materialFolder.add(material, 'visible')
 
-cameraFolder.open()
-//Make the code frame rate independant by considering clock delta time
+// Dropdown in GUI
+materialFolder.add(material, 'side', options.side).onChange(() => updateMaterial())
+materialFolder.open()
 
-const clock = new THREE.Clock()
-let delta
+function updateMaterial() {
+  material.side = Number(material.side) as THREE.Side
+
+  // Any changes to the material that would require compilation, such as transparency, must also be updated
+  material.needsUpdate = true
+}
 
 function animate() {
   requestAnimationFrame(animate)
 
-  //cube.rotation.x += 0.01
-  //cube.rotation.y += 0.01
-
-  delta = clock.getDelta()
-  cube.rotation.x += delta
-  cube.rotation.y += delta
-
+  controls.update()
 
   renderer.render(scene, camera)
 
