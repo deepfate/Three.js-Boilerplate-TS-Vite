@@ -6,6 +6,7 @@ import { GUI } from 'dat.gui'
 
 const scene = new THREE.Scene()
 scene.add(new THREE.AxesHelper(5))
+//scene.add(new THREE.GridHelper())
 
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
 camera.position.set(-2, 4, 5)
@@ -17,8 +18,8 @@ document.body.appendChild(renderer.domElement)
 new OrbitControls(camera, renderer.domElement)
 
 const boxGeometry = new THREE.BoxGeometry()
-//const sphereGeometry = new THREE.SphereGeometry()
-//const icosahedronGeometry = new THREE.IcosahedronGeometry()
+const sphereGeometry = new THREE.SphereGeometry()
+const icosahedronGeometry = new THREE.IcosahedronGeometry()
 
 console.log(boxGeometry)
 
@@ -27,16 +28,16 @@ const material = new THREE.MeshNormalMaterial({
 })
 
 const cube = new THREE.Mesh(boxGeometry, material)
-//cube.position.x = -4
+cube.position.x = -4
 scene.add(cube)
 
-// const sphere = new THREE.Mesh(sphereGeometry, material)
-// sphere.position.x = 0
-// scene.add(sphere)
+const sphere = new THREE.Mesh(sphereGeometry, material)
+sphere.position.x = 0
+scene.add(sphere)
 
-// const icosahedron = new THREE.Mesh(icosahedronGeometry, material)
-// scene.add(icosahedron)
-// sphere.position.x = 4
+const icosahedron = new THREE.Mesh(icosahedronGeometry, material)
+scene.add(icosahedron)
+sphere.position.x = 4
 
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight
@@ -68,7 +69,7 @@ cubePositionFolder.add(cube.position, 'x', -10, 10)
 cubePositionFolder.add(cube.position, 'y', -10, 10)
 cubePositionFolder.add(cube.position, 'z', -10, 10)
 const cubeScaleFolder = cubeFolder.addFolder('Scale')
-cubeScaleFolder.add(cube.scale, 'x', -5, 5, 0.1) // .onFinishChange(function() { console.log(cube.geometry) })
+cubeScaleFolder.add(cube.scale, 'x', -5, 5, 0.1).onFinishChange(function() { console.log(cube.geometry) })
 cubeScaleFolder.add(cube.scale, 'y', -5, 5, 0.1)
 cubeScaleFolder.add(cube.scale, 'z', -5, 5, 0.1)
 // cubeFolder
@@ -149,6 +150,21 @@ function animate() {
   requestAnimationFrame(animate)
 
   renderer.render(scene, camera)
+
+  scene.rotation.y += 0.002
+
+  
+  cube.rotation.x += -.01
+  cube.rotation.y += .034
+  cube.rotation.z += -.045
+  
+  icosahedron.rotation.x += .01
+  icosahedron.rotation.y += .014
+  icosahedron.rotation.z += .005
+
+  sphere.rotation.x += -.01
+  sphere.rotation.y += -.014
+  sphere.rotation.z += -.005
 
   debug.innerText = 'Matrix\n' + cube.matrix.elements.toString().replace(/,/g, '\n')
 
