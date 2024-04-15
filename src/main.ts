@@ -113,6 +113,8 @@ const meshToonMaterialFolder = gui.addFolder('MeshToonMaterial')
 meshToonMaterialFolder.addColor(data, 'color').onChange(() => {
   ;(meshes[4].material as THREE.MeshToonMaterial).color.set(data.color)
 })
+meshToonMaterialFolder.add(meshes[4].material, 'wireframe')
+meshToonMaterialFolder.open()
 
 const lightFolder = gui.addFolder('Light')
 lightFolder.add(light, 'visible')
@@ -139,6 +141,14 @@ function animate() {
 
   controls.update()
 
+  // Rotate? 
+  for (let i = 0; i < 5; i++) {
+    if(i % 2 == 0 ){
+     meshes[i].rotation.x += 0.005
+    }
+    meshes[i].rotation.y += 0.005
+  }
+
   for (let i = 0; i < 5; i++) {
     v.copy(meshes[i].position)
     v.project(camera)
@@ -150,6 +160,7 @@ function animate() {
     labels[i].style.left = x + 'px'
     labels[i].style.top = y + 'px'
     labels[i].style.display = data.labelsVisible ? 'block' : 'none'
+
   }
 
   renderer.render(scene, camera)
