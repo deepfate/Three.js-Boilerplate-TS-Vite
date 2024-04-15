@@ -32,7 +32,8 @@ scene.add(light)
 
 const data = { color: 0x00ff00, labelsVisible: true }
 
-const plane = new THREE.Mesh(new THREE.PlaneGeometry(10, 10), new THREE.MeshBasicMaterial({ color: 0x00ff00 }))
+//const plane = new THREE.Mesh(new THREE.PlaneGeometry(10, 10), new THREE.MeshBasicMaterial({ color: 0x00ff00 }))
+const plane = new THREE.Mesh(new THREE.PlaneGeometry(10, 10), new THREE.MeshNormalMaterial())
 plane.rotation.x = -Math.PI / 2
 plane.visible = false
 scene.add(plane)
@@ -57,6 +58,15 @@ const stats = new Stats()
 document.body.appendChild(stats.dom)
 
 const gui = new GUI()
+
+// GUI color picker doesnt work quite so well with Threejs, so we have to do alot of casting here. 
+// If you dont cast and write it like you would in javascript, 
+// .
+// .
+// ;(meshes[0].material.color.set(data.color)
+//
+// The IDE will flag it and tell you it doesnt know whats going on. 
+// TODO: find otu what the ';' is for. 
 
 const meshBasicMaterialFolder = gui.addFolder('MeshBasicMaterial')
 meshBasicMaterialFolder.addColor(data, 'color').onChange(() => {
@@ -104,7 +114,10 @@ const labelsFolder = gui.addFolder('Labels')
 labelsFolder.add(data, 'labelsVisible')
 labelsFolder.open()
 
+// See index.html and style
 const labels = document.querySelectorAll<HTMLDivElement>('.label')
+// Can also use:
+// const labels = document.querySelectorAll('.label') as NodeListOf<HTMLDivElement>
 
 let x, y
 const v = new THREE.Vector3()
@@ -121,6 +134,7 @@ function animate() {
     x = ((1 + v.x) / 2) * innerWidth - 50
     y = ((1 - v.y) / 2) * innerHeight
 
+    // Modify CSS style of labels using javascript
     labels[i].style.left = x + 'px'
     labels[i].style.top = y + 'px'
     labels[i].style.display = data.labelsVisible ? 'block' : 'none'
