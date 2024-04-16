@@ -134,6 +134,15 @@ const labels = document.querySelectorAll<HTMLDivElement>('.label')
 // Can also use:
 // const labels = document.querySelectorAll('.label') as NodeListOf<HTMLDivElement>
 
+// Rotation controls 
+const sceneAutoRotate = {
+  rotate: false
+};
+const sceneFolder = gui.addFolder('Scene')
+sceneFolder.add(sceneAutoRotate, "switch").name("Rotate?")
+
+
+
 let x, y
 const v = new THREE.Vector3()
 
@@ -143,7 +152,10 @@ function animate() {
 
   controls.update()
 
-  // Rotate? 
+  // Rotate Scene? 
+
+
+  // Rotate objects? 
   for (let i = 0; i < 5; i++) {
     if(i % 2 == 0 ){
      meshes[i].rotation.x += 0.005
