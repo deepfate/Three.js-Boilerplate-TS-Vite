@@ -1,3 +1,4 @@
+//Test comment to make sure I'm using github from the command line correctly. Can you read this? 
 import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
